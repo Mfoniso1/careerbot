@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CareerBot Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f5f9;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        #chat-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #user-message {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #chat-response {
+            margin-top: 30px;
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 80px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>Ask CareerBot</h2>
+        <form id="chat-form">
+            <input type="text" id="user-message" placeholder="Type your career question..." required>
+            <button type="submit">Send</button>
+        </form>
+
+        <div id="chat-response">CareerBot is ready to help you with your career questions.</div>
+    </div>
+
+    <script>
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('user-message');
+        const responseDiv = document.getElementById('chat-response');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = input.value;
+            responseDiv.innerText = "Thinking...";
+
+            try {
+                const res = await fetch('http://localhost:5001/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message }),
+                });
+
+                const data = await res.json();
+                responseDiv.innerText = "CareerBot: " + (data.reply || data.error);
+                input.value = "";
+            } catch (error) {
+                responseDiv.innerText = "Error connecting to CareerBot.";
+            }
+        });
+    </script>
+</body>
+</html>
